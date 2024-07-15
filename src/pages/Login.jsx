@@ -26,7 +26,7 @@ const Login = () => {
       console.log(user);
       setLoading(false);
       toast.success("Log in Successfull");
-      navigate("/checkout");
+      navigate("/home");
     } catch (error) {
       setLoading(false);
       toast.error(error.message);
@@ -74,6 +74,9 @@ const Login = () => {
                       Create an account
                     </Link>
                   </p>
+                  <Link style={{ textDecoration: "none" }} to="/forgotten">
+                    <p>Forgot your password ?</p>
+                  </Link>
                 </Form>
               </Col>
             )}

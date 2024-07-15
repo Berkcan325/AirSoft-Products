@@ -69,3 +69,6 @@
 .active__admin-menu {
   background: white;
 }
+.show__profileActions {
+  display: block !important;
+}

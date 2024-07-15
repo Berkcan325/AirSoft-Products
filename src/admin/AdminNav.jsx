@@ -1,8 +1,12 @@
 import React from "react";
+import { toast } from "react-toastify";
+import { useRef } from "react";
 import { Container, Row } from "reactstrap";
 import useAuth from "../custom-hooks/useAuth";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase.config";
 import "../styles/admin-nav.css";
 
 const admin__nav = [
@@ -11,7 +15,11 @@ const admin__nav = [
     path: "/dashboard",
   },
   {
-    display: "AllProducts",
+    display: "Add Products",
+    path: "/dashboard/add-products",
+  },
+  {
+    display: "All Products",
     path: "/dashboard/all-products",
   },
   {
@@ -26,6 +34,21 @@ const admin__nav = [
 
 const AdminNav = () => {
   const { currentUser } = useAuth();
+  const profileActionRef = useRef(null);
+  const navigate = useNavigate();
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        toast.success("Logged out");
+        navigate("/home");
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
+  };
+  const toggleProfileActions = () => {
+    profileActionRef.current.classList.toggle("show__profileActions");
+  };
 
   return (
     <>
@@ -34,30 +57,72 @@ const AdminNav = () => {
           <Container>
             <div className="admin__nav-wrapper-top">
               <div className="logo">
-                <h2>Fierce Shooters</h2>
+                <Link to="/home" style={{ textDecoration: "none" }}>
+                  <h2>FierceShooters</h2>
+                </Link>
               </div>
-              <div className="search__box">
-                <input type="text" placeholder="Search..." />
+              <div className="text-white">
                 <span>
-                  <i class="ri-search-line"></i>
+                  <h2>Admin Panel</h2>
                 </span>
               </div>
               <div className="admin__nav-top-right">
-                <span>
-                  <motion.i
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 1.2 }}
-                    class="ri-notification-2-line"
-                  ></motion.i>
-                </span>
-                <span>
-                  <motion.i
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 1.4 }}
-                    class="ri-settings-3-line"
-                  ></motion.i>
-                </span>
-                <img src={currentUser.photoURL} alt="" />
+                <img src={currentUser && currentUser.photoURL} alt="" />
+                <div
+                  className="profile__actions"
+                  ref={profileActionRef}
+                  onClick={toggleProfileActions}
+                >
+                  {currentUser ? (
+                    <ul className="logged__in-menu">
+                      <li>
+                        <Link
+                          style={{
+                            textDecoration: "none",
+                            color: "var(--primary-color)",
+                          }}
+                          to="/dashboard"
+                        >
+                          Dashboard
+                        </Link>
+                      </li>
+                      <li>
+                        <span onClick={logout}>Log Out</span>
+                      </li>
+                    </ul>
+                  ) : (
+                    // <span onClick={logout}>Log Out</span>
+                    <div className="d-flex align-items-center justify-content-center flex-column">
+                      <Link
+                        style={{
+                          textDecoration: "none",
+                          color: "var(--primary-color)",
+                        }}
+                        to="/login"
+                      >
+                        Log In
+                      </Link>
+                      <Link
+                        style={{
+                          textDecoration: "none",
+                          color: "var(--primary-color)",
+                        }}
+                        to="/signup"
+                      >
+                        Sign Up
+                      </Link>
+                      {/* <Link
+                        style={{
+                          textDecoration: "none",
+                          color: "var(--primary-color)",
+                        }}
+                        to="/dashboard"
+                      >
+                        Dashboard
+                      </Link> */}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </Container>

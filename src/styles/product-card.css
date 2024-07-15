@@ -28,6 +28,7 @@
   background: var(--primary-color);
   color: white;
   border-radius: 50px;
+  justify-content: right;
 }
 @media only screen and (max-width: 992px) {
   .product__info h3 a {
@@ -41,4 +42,33 @@
   .product__card-bottom span i {
     font-size: 1rem;
   }
+}
+.product__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product__card {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px; /* Adjust the width as needed */
+}
+
+.product__card img {
+  max-width: 100%;
+}
+
+.product__info {
+  text-align: center;
+}
+.product__card-bottom .ri-add-line {
+  cursor: pointer;
+}
+
+.product__card-bottom .ri-add-line[disabled] {
+  cursor: not-allowed;
+  color: grey;
 }

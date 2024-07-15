@@ -1,15 +1,17 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable react/prop-types */
 import React from "react";
 import ProductCard from "./ProductCard";
 
 const ProductsList = ({ data }) => {
   return (
-    <>
-      {data?.map((item, index) => (
-        <ProductCard item={item} key={index} />
+    <div className="product__list">
+      {data.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          thumbnail={product.imgUrls[0]}
+        />
       ))}
-    </>
+    </div>
   );
 };
 

@@ -18,10 +18,13 @@ const Footer = () => {
               </div>
             </div>
             <p className="footer__text mt-4">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Obcaecati saepe, asperiores possimus ratione nulla sunt iste nam
-              vel adipisci doloribus dolorum, rerum voluptates aut tempora!
-              Eveniet facilis accusamus libero ullam.
+              At FierceShooters, we're grateful for every shot you take and
+              every moment you spend with us. Our passion for airsoft is matched
+              only by our commitment to quality, safety, and exceptional
+              customer service. Discover a wide range of premium airsoft
+              products crafted for enthusiasts like you. Thank you for choosing
+              FierceShooters, where excellence meets adventure on every
+              battlefield.
             </p>
           </Col>
           <Col lg="3" md="3" className="mb-4">
@@ -29,19 +32,19 @@ const Footer = () => {
               <h4 className="quick__links-title">Top Categories</h4>
               <ListGroup>
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="#">Mobile Phones</Link>
+                  <Link to="">Assault Rifle</Link>
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="#">Modern Sofa</Link>
+                  <Link to="">Sniper</Link>
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="#">Arm Chair</Link>
+                  <Link to="">Pistol</Link>
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="#">Smart Watches</Link>
+                  <Link to="">Helmet</Link>
                 </ListGroupItem>
               </ListGroup>
             </div>
@@ -59,10 +62,6 @@ const Footer = () => {
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="/login">Login</Link>
-                </ListGroupItem>
-
-                <ListGroupItem className="ps-0 border-0">
                   <Link to="#">Privacy Policy</Link>
                 </ListGroupItem>
               </ListGroup>
@@ -74,21 +73,21 @@ const Footer = () => {
               <ListGroup className="footer__contact">
                 <ListGroupItem className="ps-0 border-0 d-flex align-items-center gap-2">
                   <span className="">
-                    <i class="ri-map-pin-line d-flex mb-3"></i>
+                    <i className="ri-map-pin-line d-flex mb-3"></i>
                   </span>
                   <p>Silistra 4, Varna</p>
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0 d-flex align-items-center gap-2">
                   <span>
-                    <i class="ri-phone-line d-flex mb-3"></i>
+                    <i className="ri-phone-line d-flex mb-3"></i>
                   </span>
                   <p>+359882763441</p>
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0 d-flex align-items-center gap-2">
                   <span>
-                    <i class="ri-mail-line d-flex mb-3"></i>
+                    <i className="ri-mail-line d-flex mb-3"></i>
                   </span>
                   <p>berkcansinan@gmail.com</p>
                 </ListGroupItem>

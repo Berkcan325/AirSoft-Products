@@ -15,3 +15,25 @@ th {
 .buy__btn {
   justify-content: center;
 }
+.quantity-control {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-control button {
+  border: none;
+  background: #ddd;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.quantity-control button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.quantity-control span {
+  margin: 0 0.5rem;
+  width: 2rem;
+  text-align: center;
+}

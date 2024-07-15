@@ -1,17 +1,16 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "./header.css";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import userIcon from "../../assets/images/user-icon.png";
+import userIcon from "../../assets/images/default-user-icon.png";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import useAuth from "../../custom-hooks/useAuth";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase.config";
-
-import logo from "../../assets/images/eco-logo.png";
-
+import logo from "../../assets/images/logo.jpg";
 import { Container, Row } from "reactstrap";
 import { toast } from "react-toastify";
+import checkUserRole from "../../admin/checkUserRole";
 
 const nav__links = [
   {
@@ -29,8 +28,33 @@ const nav__links = [
 ];
 
 const Header = () => {
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("User logged in:", user); // Log current user
+        try {
+          const role = await checkUserRole(user.uid);
+          console.log("Fetched user role:", role); // Log fetched role
+          setUserRole(role);
+        } catch (error) {
+          console.error("Error checking user role:", error);
+        }
+      } else {
+        console.log("No user is currently logged in");
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
   const headerRef = useRef(null);
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
+  const totalLiked = useSelector(
+    (state) => state.favorites.favoriteItems.length
+  ); // Selector to get the total number of favorited items
   const profileActionRef = useRef(null);
   const menuRef = useRef(null);
   const navigate = useNavigate();
@@ -71,10 +95,12 @@ const Header = () => {
   const navigateToCart = () => {
     navigate("/cart");
   };
+  const navigateToFavorites = () => {
+    navigate("/favorites"); // Update the path to your Favorites page
+  };
 
   const toggleProfileActions = () => {
     profileActionRef.current.classList.toggle("show__profileActions");
-    console.log("itsb eing called");
   };
 
   return (
@@ -82,12 +108,14 @@ const Header = () => {
       <Container>
         <Row>
           <div className="nav__wrapper">
-            <div className="logo">
-              <img src={logo} alt="logo" />
-              <div>
-                <h1>FierceShooters</h1>
+            <Link to="/home" style={{ textDecoration: "none" }}>
+              <div className="logo">
+                <img src={logo} alt="logo" />
+                <div>
+                  <h1>FierceShooters</h1>
+                </div>
               </div>
-            </div>
+            </Link>
             <div className="navigation" ref={menuRef} onClick={menuToggle}>
               <ul className="menu">
                 {nav__links.map((item, index) => (
@@ -109,9 +137,10 @@ const Header = () => {
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 1.3 }}
                 className="fav__icon"
+                onClick={navigateToFavorites}
               >
-                <i class="ri-heart-line"></i>
-                <span className="badge">1</span>
+                <i className="ri-heart-line"></i>
+                <span className="badge">{totalLiked}</span>
               </motion.span>
               <motion.span
                 whileHover={{ scale: 1.2 }}
@@ -119,7 +148,7 @@ const Header = () => {
                 className="cart__icon"
                 onClick={navigateToCart}
               >
-                <i class="ri-shopping-bag-4-line"></i>
+                <i className="ri-shopping-bag-4-line"></i>
                 <span className="badge">{totalQuantity}</span>
               </motion.span>
               <div className="profile">
@@ -136,7 +165,52 @@ const Header = () => {
                   onClick={toggleProfileActions}
                 >
                   {currentUser ? (
-                    <span onClick={logout}>Log Out</span>
+                    userRole === "admin" ? (
+                      <ul className="logged__in-menu">
+                        <li>
+                          <Link
+                            style={{
+                              textDecoration: "none",
+                              color: "var(--primary-color)",
+                            }}
+                            to="/profile"
+                          >
+                            <span>Profile</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            style={{
+                              textDecoration: "none",
+                              color: "var(--primary-color)",
+                            }}
+                            to="/dashboard"
+                          >
+                            Dashboard
+                          </Link>
+                        </li>
+                        <li>
+                          <span onClick={logout}>Log Out</span>
+                        </li>
+                      </ul>
+                    ) : (
+                      <ul className="logged__in-menu">
+                        <li>
+                          <Link
+                            style={{
+                              textDecoration: "none",
+                              color: "var(--primary-color)",
+                            }}
+                            to="/profile"
+                          >
+                            <span>Profile</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <span onClick={logout}>Log Out</span>
+                        </li>
+                      </ul>
+                    )
                   ) : (
                     <div className="d-flex align-items-center justify-content-center flex-column">
                       <Link
@@ -157,22 +231,13 @@ const Header = () => {
                       >
                         Sign Up
                       </Link>
-                      <Link
-                        style={{
-                          textDecoration: "none",
-                          color: "var(--primary-color)",
-                        }}
-                        to="/dashboard"
-                      >
-                        Dashboard
-                      </Link>
                     </div>
                   )}
                 </div>
               </div>
               <div className="mobile__menu">
                 <span onClick={menuToggle}>
-                  <i class="ri-menu-line"></i>
+                  <i className="ri-menu-line"></i>
                 </span>
               </div>
             </div>

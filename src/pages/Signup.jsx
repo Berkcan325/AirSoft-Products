@@ -3,25 +3,67 @@ import Helmet from "../components/Helmet/Helmet";
 import { Container, Row, Col, Form, FormGroup } from "reactstrap";
 import { Link } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { auth } from "../firebase.config";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
+import { auth, db, storage } from "../firebase.config";
 import { setDoc, doc } from "firebase/firestore";
-import { storage } from "../firebase.config";
-import { db } from "../firebase.config";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import userIcon from "../assets/images/default-user-icon.png";
 import "../styles/login.css";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const isPasswordValid = (password) => {
+    return password.length >= 8 && /\d/.test(password);
+  };
+
+  const uploadDefaultImage = async () => {
+    const response = await fetch(userIcon); // Fetch the default image
+    const blob = await response.blob(); // Convert to blob
+    const storageRef = ref(storage, `images/1719779520137-Berkcan.jpg`);
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        null,
+        (error) => {
+          reject(error);
+        },
+        async () => {
+          resolve(await getDownloadURL(uploadTask.snapshot.ref));
+        }
+      );
+    });
+  };
+
   const signup = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      toast.error(
+        "Password must be at least 8 characters long and contain a number"
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       const userCredentials = await createUserWithEmailAndPassword(
@@ -30,35 +72,52 @@ const Signup = () => {
         password
       );
       const user = userCredentials.user;
-      const storageRef = ref(storage, `images/${Date.now() + username}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        (error) => {
-          toast.error(error.message);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await updateProfile(user, {
-              displayName: username,
-              photoURL: downloadURL,
-            });
-            await setDoc(doc(db, "users", user.uid), {
-              uid: user.uid,
-              displayName: username,
-              email,
-              photoURL: downloadURL,
-            });
-          });
-        }
-      );
+
+      let downloadURL = null;
+      if (file) {
+        const storageRef = ref(storage, `images/${Date.now()}-${username}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        downloadURL = await new Promise((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            null,
+            (error) => {
+              reject(error);
+            },
+            async () => {
+              resolve(await getDownloadURL(uploadTask.snapshot.ref));
+            }
+          );
+        });
+      } else {
+        // Upload the default user icon if no file is provided
+        downloadURL = await uploadDefaultImage();
+      }
+
+      await updateProfile(user, {
+        displayName: username,
+        photoURL: downloadURL,
+      });
+
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        displayName: username,
+        email,
+        role: "user",
+        photoURL: downloadURL,
+      });
 
       setLoading(false);
-
       toast.success("Account created");
-      navigate("/login");
+      navigate("/home");
     } catch (error) {
       setLoading(false);
-      toast.error("Something went wrong");
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("Email already in use");
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
@@ -101,6 +160,14 @@ const Signup = () => {
                   </FormGroup>
                   <FormGroup className="form__group">
                     <input
+                      type="password"
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup className="form__group">
+                    <input
                       type="file"
                       onChange={(e) => setFile(e.target.files[0])}
                     />
@@ -109,7 +176,7 @@ const Signup = () => {
                     Create an Account
                   </button>
                   <p>
-                    Already have na account?{" "}
+                    Already have an account?{" "}
                     <Link
                       style={{ color: "white", textDecoration: "none" }}
                       to="/login"

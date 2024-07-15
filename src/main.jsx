@@ -15,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         <ToastContainer
           theme="dark"
+          hideProgressBar={true}
           position="top-right"
           autoClose={3000}
           closeOnClick

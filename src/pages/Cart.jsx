@@ -48,7 +48,7 @@ const Cart = () => {
                 </h6>
               </div>
               <p className="fs-6 mt-2">
-                taxes and shipping fees will get calculate in checkout
+                taxes and shipping fees will get calculated in checkout
               </p>
               <div>
                 <Link
@@ -86,6 +86,15 @@ const Cart = () => {
 
 const Tr = ({ item }) => {
   const dispatch = useDispatch();
+
+  const increment = () => {
+    dispatch(cartActions.incrementQuantity(item.id));
+  };
+
+  const decrement = () => {
+    dispatch(cartActions.decrementQuantity(item.id));
+  };
+
   const deleteProduct = () => {
     dispatch(cartActions.deleteItem(item.id));
   };
@@ -95,16 +104,31 @@ const Tr = ({ item }) => {
       <td>
         <img src={item.imgUrl} alt="" />
       </td>
-      <td>{item.productName}</td>
+      <td className="">{item.productName}</td>
       <td>${item.price}</td>
-      <td>{item.quantity}</td>
       <td>
-        <motion.i
+        <div className="quantity-control">
+          <button onClick={decrement} disabled={item.quantity <= 1}>
+            -
+          </button>
+          <span>{item.quantity}</span>
+          <button
+            onClick={increment}
+            disabled={item.quantity >= item.availableQuantity}
+          >
+            +
+          </button>
+        </div>
+      </td>
+      <td>
+        <motion.button
           onClick={deleteProduct}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 1.4 }}
-          class="ri-delete-bin-5-line"
-        ></motion.i>
+          className="buy__btn mt-0"
+        >
+          Remove
+        </motion.button>
       </td>
     </tr>
   );

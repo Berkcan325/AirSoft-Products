@@ -13,7 +13,7 @@ const Services = () => {
             <Col lg="3" md="4" key={index}>
               <motion.div whileHover={{ scale: 1.1 }} className="service__item">
                 <span>
-                  <i class={item.icon}></i>
+                  <i className={item.icon}></i>
                 </span>
                 <div>
                   <h3>{item.title}</h3>

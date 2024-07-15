@@ -36,7 +36,7 @@
 }
 
 .review__wrapper ul li span {
-  color: coral;
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -95,4 +95,61 @@
   .rating__group span {
     column-gap: 1rem !important;
   }
+}
+.ri-star-fill,
+.ri-star-half-fill,
+.ri-star-line {
+  font-size: 1.5rem;
+  color: coral;
+}
+.review__header {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust gap as needed */
+}
+
+.review__header h6 {
+  margin-bottom: 0; /* Removes margin from the username */
+}
+
+.review__date {
+  margin-left: auto; /* Pushes the date to the right */
+  font-size: 0.9rem; /* Smaller font for the date */
+  color: var(--primary-color);
+}
+.product__image-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.image__navigation {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.img__btn {
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: black;
+  cursor: pointer;
+}
+
+.prev__btn {
+  position: absolute;
+  left: 10px;
+}
+
+.next__btn {
+  position: absolute;
+  right: 10px;
+}
+.pe-auto,
+.active__tab {
+  cursor: pointer;
 }
